@@ -8,9 +8,13 @@ public class Main {
     private static final int CAPACITY = 10;
 
     public static void main(String[] args) {
+        secondExample();
+    }
+
+    private static void firstExample() {
         BlockingQueue<Integer> queue = new ArrayBlockingQueue<>(CAPACITY);
 
-	    Runnable readRunnable = () -> {
+        Runnable readRunnable = () -> {
             try {
                 for (int i = 0; i < CAPACITY; i++) {
                     Integer num = queue.take();
@@ -21,22 +25,52 @@ public class Main {
             }
         };
 
-	    Runnable writeRunnable = () -> {
-	        try {
+        Runnable writeRunnable = () -> {
+            try {
                 for (int i = 0; i < CAPACITY; i++) {
                     queue.put(i);
                     System.out.println("Added new value: " + i);
                 }
             } catch (InterruptedException e) {
-	            e.printStackTrace();
+                e.printStackTrace();
             }
         };
-	    Thread read = new Thread(readRunnable);
-	    Thread write = new Thread(writeRunnable);
+        Thread read = new Thread(readRunnable);
+        Thread write = new Thread(writeRunnable);
 
-	    System.out.println("Starting process...");
-	    write.start();
-	    read.start();
-	    System.out.println("Done");
+        System.out.println("Starting process...");
+        write.start();
+        read.start();
+        System.out.println("Done");
+    }
+
+    private static void secondExample() {
+        Puttaker puttaker = new Puttaker();
+
+        Runnable readRunnable = () -> {
+            try {
+                for (int i = 0; i < CAPACITY; i++) {
+                    String value = puttaker.take();
+                    System.out.println("Got value: " + value);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+
+        Runnable writeRunnable = () -> {
+            try {
+                String value = "Yamete!";
+                for (int i = 0; i < CAPACITY; i++) {
+                    puttaker.put(value + i);
+                    System.out.println("Set value num: " + i);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+
+        new Thread(readRunnable).start();
+        new Thread(writeRunnable).start();
     }
 }
