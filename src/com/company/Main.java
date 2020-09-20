@@ -1,16 +1,17 @@
 package com.company;
 
+import java.util.Date;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
 
     private static final int CAPACITY = 10;
     private static final int ONE_COUNTER_NUMBER = 50000;
+    private static final int MAX_COUNTER_NUMBER = 100000;
 
     public static void main(String[] args) throws InterruptedException {
-        thirdExample();
+        fourthExample();
     }
 
     private static void firstExample() {
@@ -101,4 +102,39 @@ public class Main {
         second.join();
         System.out.println("Counter: " + counter.getValue());
     }
+
+    private static void fourthExample() throws InterruptedException {
+        Counter counter = new Counter();
+
+        Runnable firstRunnable = () -> {
+            for (int i = 0; i < ONE_COUNTER_NUMBER; i++) {
+                counter.increment();
+            }
+            System.out.println("First completed: " + counter.getValue());
+        };
+
+        Runnable secondRunnable = () -> {
+            for (int i = 0; i < ONE_COUNTER_NUMBER; i++) {
+                counter.increment();
+            }
+            System.out.println("Second completed: " + counter.getValue());
+        };
+
+        Runnable thirdRunnable = () -> {
+            Date before = new Date();
+            while (counter.getValue() != MAX_COUNTER_NUMBER) {
+            }
+            System.out.println("Counter: " + counter.getValue());
+            Date after = new Date();
+            long res = after.getTime() - before.getTime();
+            System.out.println("Time: " + res);
+        };
+
+        Thread first = new Thread(firstRunnable);
+        first.start();
+        Thread second = new Thread(secondRunnable);
+        second.start();
+        new Thread(thirdRunnable).start();
+    }
+
 }

@@ -1,7 +1,7 @@
 package com.company;
 
 public class Counter {
-    private int value;
+    private volatile int value;
 
     public int getValue() {
         return value;
