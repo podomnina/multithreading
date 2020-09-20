@@ -2,13 +2,15 @@ package com.company;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
 
     private static final int CAPACITY = 10;
+    private static final int ONE_COUNTER_NUMBER = 50000;
 
-    public static void main(String[] args) {
-        secondExample();
+    public static void main(String[] args) throws InterruptedException {
+        thirdExample();
     }
 
     private static void firstExample() {
@@ -72,5 +74,31 @@ public class Main {
 
         new Thread(readRunnable).start();
         new Thread(writeRunnable).start();
+    }
+
+    private static void thirdExample() throws InterruptedException {
+        Counter counter = new Counter();
+
+        Runnable firstRunnable = () -> {
+            for (int i = 0; i < ONE_COUNTER_NUMBER; i++) {
+                counter.increment();
+            }
+            System.out.println("First completed: " + counter.getValue());
+        };
+
+        Runnable secondRunnable = () -> {
+            for (int i = 0; i < ONE_COUNTER_NUMBER; i++) {
+                counter.increment();
+            }
+            System.out.println("Second completed: " + counter.getValue());
+        };
+
+        Thread first = new Thread(firstRunnable);
+        first.start();
+        Thread second = new Thread(secondRunnable);
+        second.start();
+        first.join();
+        second.join();
+        System.out.println("Counter: " + counter.getValue());
     }
 }
